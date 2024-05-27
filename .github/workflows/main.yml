@@ -12,14 +12,18 @@ jobs:
   laravel_build:
     name: Laravel Build
     runs-on: ubuntu-latest
-
+    env:
+      DB_DATABASE: blogcms
+      DB_USERNAME: root
+      DB_PASSWORD: password
+      BROADCAST_DRIVER: log
     services:
       mysql:
         image: mysql:5.7
         env:
           MYSQL_ALLOW_EMPTY_PASSWORD: false
           MYSQL_ROOT_PASSWORD: password
-          MYSQL_DATABASE: laravel
+          MYSQL_DATABASE: blogcms
         ports:
           - 3306/tcp
         options: >-
