@@ -72,16 +72,16 @@
             </nav>
 
             <div class="flex items-center text-lg no-underline text-white pr-6">
-                <a class="" href="{{ $setting->url_fb }}">
+                <a class="" href="{{ $setting?->url_fb }}">
                     <i class="fab fa-facebook"></i>
                 </a>
-                <a class="pl-6" href="{{ $setting->url_insta }}">
+                <a class="pl-6" href="{{ $setting?->url_insta }}">
                     <i class="fab fa-instagram"></i>
                 </a>
-                <a class="pl-6" href="{{ $setting->url_twitter }}">
+                <a class="pl-6" href="{{ $setting?->url_twitter }}">
                     <i class="fab fa-twitter"></i>
                 </a>
-                <a class="pl-6" href="{{ $setting->url_linkedin }}">
+                <a class="pl-6" href="{{ $setting?->url_linkedin }}">
                     <i class="fab fa-linkedin"></i>
                 </a>
             </div>
@@ -93,10 +93,10 @@
     <header class="w-full container mx-auto">
         <div class="flex flex-col items-center py-12">
             <a class="font-bold text-gray-800 uppercase hover:text-gray-700 text-5xl" href="{{ route('webhome') }}">
-                {{ $setting->site_name }}
+                {{ $setting?->site_name }}
             </a>
             <p class="text-lg text-gray-600">
-                {{ $setting->description }}
+                {{ $setting?->description }}
             </p>
         </div>
     </header>
@@ -135,7 +135,7 @@
 
                 <div class="w-full bg-white shadow flex flex-col my-4 p-6">
                     <p class="text-xl font-semibold pb-5">About Us</p>
-                    <p class="pb-2">{{ $setting->about }}</p>
+                    <p class="pb-2">{{ $setting?->about }}</p>
                     {{-- <a href="#"
                     class="w-full bg-blue-800 text-white font-bold text-sm uppercase rounded hover:bg-blue-700 flex items-center justify-center px-2 py-3 mt-4">
                     Get to know us
@@ -201,7 +201,7 @@
                     <a href="{{ route('page.show', $page->slug) }}" class="uppercase px-3 hover:text-blue-700">{{ $page->name }}</a>
                 @endforeach
             </div>
-            <div class="uppercase pb-6">&copy; {{ $setting->copy_rights }}</div>
+            <div class="uppercase pb-6">&copy; {{ $setting?->copy_rights }}</div>
         </div>
     </footer>
 
