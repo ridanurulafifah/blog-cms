@@ -95,12 +95,12 @@ jobs:
       - name: Notify to Telegram
         run: |
           if [ "${{ needs.laravel_build.result }}" == "success" ] && [ "${{ needs.laravel_test.result }}" == "success" ]; then
-            NOTIFY_MESSAGE = "CI/CD Pipeline Success ✅"
+            STATUS = "CI/CD Pipeline Success ✅"
           else
-            NOTIFY_MESSAGE = "CI/CD Pipeline Failure ❌"
+            STATUS = "CI/CD Pipeline Failure ❌"
           fi
           curl --location --request GET "$TELEGRAM_BOT" --data-urlencode "chat_id=$TELEGRAM_CHANNEL" --data-urlencode "text=
-          $NOTIFY_MESSAGE
+          $STATUS
           📋 Commit: $GITHUB_SHA
           💬 ${{ github.event.head_commit.message }}
 
