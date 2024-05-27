@@ -39,7 +39,7 @@ jobs:
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: '8.3'
+          php-version: "8.3"
           extensions: mbstring, pdo, mysql, gd
 
       - name: Install dependencies
@@ -59,7 +59,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: '20'
+          node-version: "20"
 
       - name: Install Node.js dependencies
         run: npm install
@@ -75,14 +75,33 @@ jobs:
         with:
           name: build-artifact
           path: artifact.zip
+          retention-days: 5
 
   laravel_test:
     name: Laravel Test
     runs-on: ubuntu-latest
     needs: laravel_build
+    env:
+      DB_DATABASE: blogcms
+      DB_USERNAME: root
+      DB_PASSWORD: password
+      BROADCAST_DRIVER: log
+    services:
+      mysql:
+        image: mysql:5.7
+        env:
+          MYSQL_ALLOW_EMPTY_PASSWORD: false
+          MYSQL_ROOT_PASSWORD: password
+          MYSQL_DATABASE: blogcms
+        ports:
+          - 3306/tcp
+        options: >-
+          --health-cmd="mysqladmin ping --silent"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=3
 
     steps:
-
       - name: Download artifact
         uses: actions/download-artifact@v2
         with:
@@ -95,8 +114,13 @@ jobs:
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: '8.3'
+          php-version: "8.3"
           extensions: mbstring, pdo, mysql, gd
+
+      - name: Run Migration Database
+        run: php artisan migrate:fresh --seed
+        env:
+          DB_PORT: ${{ job.services.mysql.ports['3306'] }}
 
       - name: Run tests
         run: ./vendor/bin/phpunit
