@@ -90,15 +90,23 @@ jobs:
     runs-on: ubuntu-latest
     needs: [laravel_build, laravel_test]
     if: always()
-
+    env:
+      REPO_NAME: ${GITHUB_REPOSITORY#$GITHUB_REPOSITORY_OWNER/}
+      CURRENT_REPO: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
     steps:
       - name: Notify to Telegram
         run: |
           if [[ "${{ needs.laravel_build.result }}" == "success" && "${{ needs.laravel_test.result }}" == "success" ]]; then
-            STATUS="CI/CD Pipeline Success ✅"
+            STATUS="CI/CD Pipeline ($REPO_NAME) Success ✅"
           else
-            STATUS="CI/CD Pipeline Failure ❌"
+            STATUS="CI/CD Pipeline ($REPO_NAME) Failure ❌"
           fi
           curl --location --request GET "${{ secrets.TELEGRAM_BOT }}" \
             --data-urlencode "chat_id=${{ secrets.TELEGRAM_CHANNEL }}" \
-            --data-urlencode "text=${STATUS}"
+            --data-urlencode "text=
+            📝 Commit: $GITHUB_SHA
+            📝 Branch: $GITHUB_REF_NAME
+            📝 Status: $STATUS
+            💬 Message: ${{ github.event.head_commit.message }}
+            Cek disini: $CURRENT_REPO
+            "
