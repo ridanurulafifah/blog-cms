@@ -99,8 +99,9 @@ jobs:
           else
             STATUS = "CI/CD Pipeline Failure ❌"
           fi
-          curl --location --request GET "$TELEGRAM_BOT" --data-urlencode "chat_id=$TELEGRAM_CHANNEL" --data-urlencode "text=
-          $STATUS
+          curl --location --request GET "$TELEGRAM_BOT"
+            --data-urlencode "chat_id=$TELEGRAM_CHANNEL"
+            --data-urlencode "text=$STATUS
           📋 Commit: $GITHUB_SHA
-          💬 ${{ github.event.head_commit.message }}
+          💬 ${{ github.event.head_commit.message }}"
 
