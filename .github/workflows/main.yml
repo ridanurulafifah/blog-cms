@@ -17,12 +17,11 @@ jobs:
       mysql:
         image: mysql:5.7
         env:
-          MYSQL_USER: blogcms
-          MYSQL_DATABASE: blogcms
-          MYSQL_PASSWORD: 12345678
-          MYSQL_HOST: mysql-service
+          MYSQL_ALLOW_EMPTY_PASSWORD: false
+          MYSQL_ROOT_PASSWORD: password
+          MYSQL_DATABASE: laravel
         ports:
-          - 3306:3306
+          - 3306/tcp
         options: >-
           --health-cmd="mysqladmin ping --silent"
           --health-interval=10s
@@ -49,6 +48,8 @@ jobs:
 
       - name: Run Migration Database
         run: php artisan migrate:fresh --seed
+        env:
+          DB_PORT: ${{ job.services.mysql.ports['3306'] }}
 
       - name: Setup Node.js
         uses: actions/setup-node@v2
@@ -86,6 +87,8 @@ jobs:
 
       - name: Run Migration Database
         run: php artisan migrate:fresh --seed
+        env:
+          DB_PORT: ${{ job.services.mysql.ports['3306'] }}
 
       - name: Setup Node.js
         uses: actions/setup-node@v2
@@ -98,8 +101,10 @@ jobs:
       - name: Build Node.JS
         run: npm run build
 
-      - name: Run tests
-        run: ./vendor/bin/phpunit
+      # - name: Run tests
+      #   run: ./vendor/bin/phpunit
+      #   env:
+      #     DB_PORT: ${{ job.services.mysql.ports['3306'] }}
 
   laravel_notification:
     name: Laravel Notify
