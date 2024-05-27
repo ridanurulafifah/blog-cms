@@ -101,12 +101,11 @@ jobs:
             STATUS="CI/CD Pipeline Failure ❌"
           fi
           curl --location --request GET "${{ secrets.TELEGRAM_BOT }}" \
-            --data-urlencode "parse_mode=HTML"
             --data-urlencode "chat_id=${{ secrets.TELEGRAM_CHANNEL }}" \
             --data-urlencode "text=
             \n📝 Commit: $GITHUB_SHA
             \n📝 Branch: $GITHUB_REF_NAME
             \n📝 Status: $STATUS
-            \n💬 Message: <b>${{ github.event.head_commit.message }}</b>
+            \n💬 Message: ${{ github.event.head_commit.message }}
             \nCek disini: $CURRENT_REPO
             "
