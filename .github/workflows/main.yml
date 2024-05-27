@@ -122,6 +122,9 @@ jobs:
         env:
           DB_PORT: ${{ job.services.mysql.ports['3306'] }}
 
+      - name: Migrate PHPUnit configuration
+        run: ./vendor/bin/phpunit --migrate-configuration
+
       - name: Run tests
         run: ./vendor/bin/phpunit
         env:
