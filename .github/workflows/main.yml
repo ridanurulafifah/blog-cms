@@ -123,7 +123,7 @@ jobs:
           DB_PORT: ${{ job.services.mysql.ports['3306'] }}
 
       - name: Migrate PHPUnit configuration
-        run: ./vendor/bin/phpunit --migrate-configuration
+        run: ./vendor/bin/phpunit --migrate-configuration || true
 
       - name: Run tests
         run: ./vendor/bin/phpunit
