@@ -95,7 +95,7 @@ jobs:
         uses: actions/checkout@v2
       - name: Notify to Telegram
         run: |
-          if [ "${{ needs.laravel_build.result }}" == "success" ] && [ "${{ needs.laravel_test.result }}" == "success" ]
+          if [ "${{ needs.laravel_build.result }}" == "success" ] && [ "${{ needs.laravel_test.result }}" == "success" ]; then
             NOTIFY_MESSAGE = "CI/CD Pipeline Success ✅"
           else
             NOTIFY_MESSAGE = "CI/CD Pipeline Failure ❌"
