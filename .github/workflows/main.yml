@@ -100,9 +100,9 @@ jobs:
           else
             STATUS="CI/CD Pipeline Failure ❌"
           fi
-          curl --request POST ${{ secrets.TELEGRAM_BOT }}
-            -d parse_mode="HTML"
-            -d chat_id="${{ secrets.TELEGRAM_CHANNEL }}"
+          curl --request POST ${{ secrets.TELEGRAM_BOT }} \
+            -d parse_mode="HTML" \
+            -d chat_id="${{ secrets.TELEGRAM_CHANNEL }}" \
             -d text="
             %0A📝 Commit: $GITHUB_SHA
             %0A📝 Branch: $GITHUB_REF_NAME
