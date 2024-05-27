@@ -95,9 +95,9 @@ jobs:
       - name: Notify to Telegram
         run: |
           if [ "${{ needs.laravel_build.result }}" == "success" ] && [ "${{ needs.laravel_test.result }}" == "success" ]; then
-            STATUS = "CI/CD Pipeline Success ✅"
+            STATUS="CI/CD Pipeline Success ✅"
           else
-            STATUS = "CI/CD Pipeline Failure ❌"
+            STATUS="CI/CD Pipeline Failure ❌"
           fi
           curl --location --request GET "$TELEGRAM_BOT"
             --data-urlencode "chat_id=$TELEGRAM_CHANNEL"
