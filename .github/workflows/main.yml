@@ -91,6 +91,11 @@ jobs:
       - name: Unzip artifact
         run: unzip -o artifact.zip
 
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+
       - name: Run tests
         run: ./vendor/bin/phpunit
 
