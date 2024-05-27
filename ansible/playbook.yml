@@ -1,0 +1,92 @@
+---
+- name: "Setup Linux, Nginx, MySQL, PHP (LEMP stack)"
+  hosts: "server1"
+  become: true
+  tasks:
+    - name: Update and upgrade apt packages
+      apt:
+        update_cache: yes
+        upgrade: dist
+
+    - name: Install common packages
+      apt:
+        name: "{{ item }}"
+        state: present
+      loop:
+        - curl
+        - gnupg
+        - software-properties-common
+
+    - name: Install Nginx
+      apt:
+        name: nginx
+        state: present
+
+    - name: Ensure Nginx is running
+      service:
+        name: nginx
+        state: started
+        enabled: yes
+
+    - name: Install PyMySQL
+      apt:
+        name: python3-pymysql
+        state: present
+      when: ansible_distribution == "Ubuntu" or ansible_distribution == "Debian"
+
+    - name: Install PyMySQL
+      yum:
+        name: python3-PyMySQL
+        state: present
+      when: ansible_distribution == "CentOS" or ansible_distribution == "RedHat"
+
+    - name: Install MySQL server
+      apt:
+        name: mysql-server
+        state: present
+        force: yes
+        install_recommends: no
+
+    - name: Ensure MySQL is running
+      service:
+        name: mysql
+        state: started
+        enabled: yes
+
+    - name: Set MySQL root password
+      mysql_user:
+        name: root
+        password: your_root_password
+        login_unix_socket: /var/run/mysqld/mysqld.sock
+        state: present
+
+    - name: Remove Apache2 if installed
+      apt:
+        name: apache2*
+        state: absent
+
+    - name: Add PHP PPA repository
+      apt_repository:
+        repo: ppa:ondrej/php
+        state: present
+
+    - name: Install PHP 8.3 and common extensions
+      apt:
+        name: "{{ item }}"
+        state: present
+      loop:
+        - php8.3
+        - php8.3-fpm
+        - php8.3-mysql
+        - php8.3-xml
+        - php8.3-cli
+        - php8.3-curl
+        - php8.3-mbstring
+
+    - name: Ensure PHP-FPM is running
+      service:
+        name: php8.3-fpm
+        state: started
+        enabled: yes
+
+
