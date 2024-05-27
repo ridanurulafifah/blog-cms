@@ -17,9 +17,10 @@ jobs:
       mysql:
         image: mysql:5.7
         env:
-          MYSQL_ALLOW_EMPTY_PASSWORD: true
+          MYSQL_USER: blogcms
           MYSQL_DATABASE: blogcms
           MYSQL_PASSWORD: 12345678
+          MYSQL_HOST: mysql-service
         ports:
           - 3306:3306
         options: >-
