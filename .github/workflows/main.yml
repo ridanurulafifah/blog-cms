@@ -89,10 +89,9 @@ jobs:
     name: Laravel Notify
     runs-on: ubuntu-latest
     needs: [laravel_build, laravel_test]
+    if: always()
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
       - name: Notify to Telegram
         run: |
           if [ "${{ needs.laravel_build.result }}" == "success" ] && [ "${{ needs.laravel_test.result }}" == "success" ]; then
@@ -102,6 +101,6 @@ jobs:
           fi
           curl --location --request GET "$TELEGRAM_BOT" --data-urlencode "chat_id=$TELEGRAM_CHANNEL" --data-urlencode "text=
           $NOTIFY_MESSAGE
-          📋 Commit: $CI_COMMIT_SHA
-          $CI_COMMIT_MESSAGE
+          📋 Commit: $GITHUB_SHA
+          💬 ${{ github.event.head_commit.message }}
 
