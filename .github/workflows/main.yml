@@ -99,6 +99,6 @@ jobs:
           else
             STATUS="CI/CD Pipeline Failure ❌"
           fi
-          curl --location --request POST "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT }}/sendMessage" \
-            --data-urlencode "chat_id=${{ secrets.TELEGRAM_CHANNEL }}" \
+          curl --location --request POST "https://api.telegram.org/bot${{ secrets.telegram.TELEGRAM_BOT }}/sendMessage" \
+            --data-urlencode "chat_id=${{ secrets.telegram.TELEGRAM_CHANNEL }}" \
             --data-urlencode "text=${STATUS}"
