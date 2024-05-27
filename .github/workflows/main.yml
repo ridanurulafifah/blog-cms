@@ -81,8 +81,6 @@ jobs:
     needs: laravel_build
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
 
       - name: Download artifact
         uses: actions/download-artifact@v2
@@ -91,7 +89,7 @@ jobs:
           path: .
 
       - name: Unzip artifact
-        run: unzip artifact.zip
+        run: unzip -o artifact.zip
 
       - name: Run tests
         run: ./vendor/bin/phpunit
@@ -107,17 +105,17 @@ jobs:
       - name: Notify to Telegram
         run: |
           if [[ "${{ needs.laravel_build.result }}" == "success" && "${{ needs.laravel_test.result }}" == "success" ]]; then
-            STATUS="CI/CD Pipeline Success ✅"
+            STATUS="CI/CD Pipeline <b>Success ✅</b>"
           else
-            STATUS="CI/CD Pipeline Failure ❌"
+            STATUS="CI/CD Pipeline <b>Failure ❌</b>"
           fi
           curl --request POST ${{ secrets.TELEGRAM_BOT }} \
             -d parse_mode="HTML" \
             -d chat_id="${{ secrets.TELEGRAM_CHANNEL }}" \
             -d text="
+            %0A📝 Status: $STATUS
             %0A📝 Commit: $GITHUB_SHA
             %0A📝 Branch: $GITHUB_REF_NAME
-            %0A📝 Status: $STATUS
             %0A💬 Message: <b>${{ github.event.head_commit.message }}</b>
             %0ACek disini: $CURRENT_REPO
             "
