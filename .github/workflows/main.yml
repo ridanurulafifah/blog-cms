@@ -161,6 +161,7 @@ jobs:
     name: Deploy
     runs-on: ubuntu-latest
     needs: [laravel_build, laravel_test]
+    if: always()
 
     steps:
       - name: Download artifact
@@ -169,14 +170,21 @@ jobs:
           name: build-artifact
           path: .
 
+      - name: Check if artifact exists
+        run: ls -lh artifact.zip
+
       - name: Send File to Telegram
         env:
           CURRENT_REPO: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
         run: |
-          curl --request POST ${{ secrets.TELEGRAM_DEPLOY }} \
-          -F "chat_id=${{ secrets.TELEGRAM_CHANNEL }}" \
-          -F "document=@artifact.zip" \
-          -F "caption=$CURRENT_REPO"
+          if [ -f "artifact.zip" ]; then
+            curl --location --request POST ${{ secrets.TELEGRAM_DEPLOY }} \
+              -F "chat_id=${{ secrets.TELEGRAM_CHANNEL }}" \
+              -F "document=@artifact.zip" \
+              -F "caption=$CURRENT_REPO"
+          else
+            echo "Artifact file not found!"
+          fi
 
       # - name: Unzip artifact
       #   run: unzip -o artifact.zip
