@@ -180,7 +180,7 @@ jobs:
           if [ -f "artifact.zip" ]; then
             curl --location --request POST ${{ secrets.TELEGRAM_DEPLOY }} \
               --form "chat_id=${{ secrets.TELEGRAM_CHANNEL }}" \
-              --form "document=@$(pwd)/artifact.zip" \
+              --form "document=artifact.zip" \
               --form "caption=$CURRENT_REPO"
           else
             echo "Artifact file not found!"
