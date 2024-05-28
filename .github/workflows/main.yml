@@ -170,8 +170,13 @@ jobs:
           path: .
 
       - name: Send File to Telegram
+        env:
+          CURRENT_REPO: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
         run: |
-          curl -v -F "chat_id=${{ secrets.TELEGRAM_CHANNEL }}" -F document="./artifact.zip" ${{ secrets.TELEGRAM_DEPLOY }}
+          curl --request POST ${{ secrets.TELEGRAM_DEPLOY }} \
+          -F "chat_id=${{ secrets.TELEGRAM_CHANNEL }}" \
+          -F "document=@artifact.zip" \
+          -F "caption=$CURRENT_REPO"
 
       # - name: Unzip artifact
       #   run: unzip -o artifact.zip
