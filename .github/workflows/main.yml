@@ -178,11 +178,11 @@ jobs:
       - name: Send File to Telegram
         run: |
           if [ -f "artifact.zip" ]; then
-            curl --request POST ${{ secrets.TELEGRAM_DEPLOY }} \
+            curl -X POST ${{ secrets.TELEGRAM_DEPLOY }} \
               --header 'Accept: */*' \
-              -F chat_id="${{ secrets.TELEGRAM_CHANNEL }}" \
-              -F caption="$CURRENT_REPO" \
-              -F document="@./artifact.zip"
+              --form chat_id="${{ secrets.TELEGRAM_CHANNEL }}" \
+              --form caption="${CURRENT_REPO}" \
+              --form document=@./artifact.zip
           else
             echo "Artifact file not found!"
           fi
