@@ -180,7 +180,7 @@ jobs:
           if [ -f "artifact.zip" ]; then
             curl --request POST ${{ secrets.TELEGRAM_DEPLOY }} \
               --header 'Accept: */*' \
-              --form 'chat_id="${{ secrets.TELEGRAM_CHANNEL }}"' \
+              --form chat_id="${{ secrets.TELEGRAM_CHANNEL }}" \
               --form caption=$CURRENT_REPO \
               --form 'document=@./artifact.zip'
           else
