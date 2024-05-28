@@ -200,6 +200,9 @@ jobs:
           echo "${{ secrets.ID_RSA }}" > ssh_private_key_cicd_polindra
           chmod 600 ssh_private_key_cicd_polindra
 
+      - name: Delete artifact.zip on Server Cloud
+        run: ssh -i ssh_private_key_cicd_polindra -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP -p $SSH_PORT 'cd $DEPLOY_PATH && rm -f artifact.zip' || true
+
       - name: Deploy to Server
         run: |
           echo "Deploying application..."
@@ -209,7 +212,8 @@ jobs:
           rsync -avz --info=progress2 -e "ssh -i ssh_private_key_cicd_polindra -o StrictHostKeyChecking=no -p $SSH_PORT" artifact.zip $SERVER_USER@$SERVER_IP:$DEPLOY_PATH
 
       - name: Delete All Exclude artifact.zip
-        run: ssh -i ssh_private_key_cicd_polindra -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP -p $SSH_PORT 'cd $DEPLOY_PATH && find . -mindepth 1 ! -name artifact.zip -delete'
+        run: |
+          ssh -i ssh_private_key_cicd_polindra -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP -p $SSH_PORT 'cd $DEPLOY_PATH && find $DEPLOY_PATH -mindepth 1 ! -name artifact.zip -delete'
 
       - name: Extract and Remove artifact.zip
         run: ssh -i ssh_private_key_cicd_polindra -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP -p $SSH_PORT 'cd $DEPLOY_PATH && unzip -o artifact.zip && rm -f artifact.zip'
