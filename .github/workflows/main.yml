@@ -205,9 +205,9 @@ jobs:
           echo "Deploying application..."
           rsync -avz --exclude '.git' -e "ssh -p $SSH_PORT" ./ $SERVER_USER@$SERVER_IP:$DEPLOY_PATH
 
-      # - name: Fill .env
-      #   run: |
-      #     ssh -i ${{ secrets.ID_RSA }} -o StrictHostKeyChecking=no ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }} -p ${{ secrets.SSH_PORT }} 'echo "${{ secrets.ENV_FILE_CONTENT }}" > /var/www/laravel/.env'
+      - name: Fill .env
+        run: |
+          ssh -i ${{ secrets.ID_RSA }} -o StrictHostKeyChecking=no ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }} -p ${{ secrets.SSH_PORT }} 'echo "${{ secrets.ENV_FILE_CONTENT }}" > /var/www/laravel/.env'
 
       # - name: Run Migration in Database Server
       #   run: |
