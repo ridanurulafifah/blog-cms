@@ -182,7 +182,7 @@ jobs:
               --header 'Accept: */*' \
               --form chat_id="${{ secrets.TELEGRAM_CHANNEL }}" \
               --form caption="${CURRENT_REPO}" \
-              --form document=@./artifact.zip
+              --form 'document=@./artifact.zip'
           else
             echo "Artifact file not found!"
           fi
