@@ -155,3 +155,46 @@ jobs:
             %0A💬 Message: <b>${{ github.event.head_commit.message }}</b>
             %0ACek disini: $CURRENT_REPO
             "
+
+
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+    needs: [laravel_build, laravel_test]
+
+    steps:
+      - name: Download artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: build-artifact
+          path: .
+
+      - name: Send File to Telegram
+        run: |
+          curl -v -F "chat_id=${{ secrets.TELEGRAM_CHANNEL }}" -F document="./artifact.zip" ${{ secrets.TELEGRAM_DEPLOY }}
+
+      # - name: Unzip artifact
+      #   run: unzip -o artifact.zip
+
+      # - name: Add SSH key
+      #   uses: webfactory/ssh-agent@v0.5.3
+      #   with:
+      #     ssh-private-key: ${{ secrets.ID_RSA }}
+
+      # - name: Deploy to Server
+      #   env:
+      #     SERVER_USER: ${{ secrets.SERVER_USER }}
+      #     SERVER_IP: ${{ secrets.SERVER_IP }}
+      #     SERVER_PORT: ${{ secrets.SERVER_PORT }}
+      #     DEPLOY_PATH: /var/www/laravel/
+      #   run: |
+      #     echo "Deploying application..."
+      #     rsync -avz --exclude '.git' -e "ssh -p $SERVER_PORT" ./ $SERVER_USER@$SERVER_IP:$DEPLOY_PATH
+
+      # - name: Fill .env
+      #   run: |
+      #     ssh -i ${{ secrets.ID_RSA }} -o StrictHostKeyChecking=no ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }} -p ${{ secrets.SSH_PORT }} 'echo "${{ secrets.ENV_FILE_CONTENT }}" > /var/www/laravel/.env'
+
+      # - name: Run Migration in Database Server
+      #   run: |
+      #     ssh -i ${{ secrets.ID_RSA }} -o StrictHostKeyChecking=no ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }} -p ${{ secrets.SSH_PORT }} 'cd /path/to/deployment && php artisan migrate --force'
