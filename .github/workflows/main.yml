@@ -178,10 +178,12 @@ jobs:
           CURRENT_REPO: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
         run: |
           if [ -f "artifact.zip" ]; then
-            curl --location --request POST ${{ secrets.TELEGRAM_DEPLOY }} \
-              --form "chat_id=${{ secrets.TELEGRAM_CHANNEL }}" \
-              --form "document=artifact.zip" \
-              --form "caption=$CURRENT_REPO"
+            curl  -X POST \
+              '${{ secrets.TELEGRAM_DEPLOY }}' \
+              --header 'Accept: */*' \
+              --form 'chat_id="${{ secrets.TELEGRAM_CHANNEL }}"' \
+              --form 'caption="$CURRENT_REPO"' \
+              --form 'document=@./artifact.zip'
           else
             echo "Artifact file not found!"
           fi
