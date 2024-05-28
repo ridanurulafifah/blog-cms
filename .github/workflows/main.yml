@@ -181,7 +181,7 @@ jobs:
             curl --request POST ${{ secrets.TELEGRAM_DEPLOY }} \
               --header 'Accept: */*' \
               --form 'chat_id="${{ secrets.TELEGRAM_CHANNEL }}"' \
-              --form 'caption="${CURRENT_REPO}"' \
+              --form 'caption=$CURRENT_REPO' \
               --form 'document=@./artifact.zip'
           else
             echo "Artifact file not found!"
