@@ -174,9 +174,8 @@ jobs:
         run: ls -lh artifact.zip
 
       - name: Send File to Telegram
-        env:
-          CURRENT_REPO: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
         run: |
+          CURRENT_REPO: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
           if [ -f "artifact.zip" ]; then
             curl  -X POST \
               '${{ secrets.TELEGRAM_DEPLOY }}' \
