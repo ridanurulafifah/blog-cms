@@ -156,7 +156,6 @@ jobs:
             %0ACek disini: $CURRENT_REPO
             "
 
-
   deploy:
     name: Deploy
     runs-on: ubuntu-latest
@@ -164,6 +163,12 @@ jobs:
     if: always()
     env:
       CURRENT_REPO: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+      ID_RSA: ${{ secrets.ID_RSA }}
+      SERVER_USER: ${{ secrets.SERVER_USER }}
+      SERVER_IP: ${{ secrets.SERVER_IP }}
+      SSH_PORT: ${{ secrets.SSH_PORT }}
+      ENV_FILE_CONTENT: ${{ secrets.ENV_FILE_CONTENT }}
+      DEPLOY_PATH: /var/www/laravel/
 
     steps:
       - name: Download artifact
@@ -196,22 +201,33 @@ jobs:
           chmod 600 ssh_private_key_cicd_polindra
 
       - name: Deploy to Server
-        env:
-          ID_RSA: ${{ secrets.ID_RSA }}
-          SERVER_USER: ${{ secrets.SERVER_USER }}
-          SERVER_IP: ${{ secrets.SERVER_IP }}
-          SSH_PORT: ${{ secrets.SSH_PORT }}
-          ENV_FILE_CONTENT: ${{ secrets.ENV_FILE_CONTENT }}
-          DEPLOY_PATH: /var/www/laravel/
         run: |
           echo "Deploying application..."
           chmod og= ssh_private_key_cicd_polindra
           rm -f -R .git && rm -f artifact.zip
           zip -r artifact.zip .
           rsync -avz --info=progress2 -e "ssh -i ssh_private_key_cicd_polindra -o StrictHostKeyChecking=no -p $SSH_PORT" artifact.zip $SERVER_USER@$SERVER_IP:$DEPLOY_PATH
-          ssh -i ssh_private_key_cicd_polindra -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP -p $SSH_PORT 'cd $DEPLOY_PATH && find . -mindepth 1 ! -name artifact.zip -delete'
-          ssh -i ssh_private_key_cicd_polindra -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP -p $SSH_PORT 'cd $DEPLOY_PATH && unzip -o artifact.zip && rm -f artifact.zip'
+          rm -f ssh_private_key_cicd_polindra
 
+      - name: Add SSH key
+        run: |
+          echo "${{ secrets.ID_RSA }}" > ssh_private_key_cicd_polindra
+          chmod 600 ssh_private_key_cicd_polindra
+
+      - name: Delete All Exclude artifact.zip
+        run: |
+          ssh -i ssh_private_key_cicd_polindra -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP -p $SSH_PORT 'cd $DEPLOY_PATH && find . -mindepth 1 ! -name artifact.zip -delete'
+          rm -f ssh_private_key_cicd_polindra
+
+      - name: Add SSH key
+        run: |
+          echo "${{ secrets.ID_RSA }}" > ssh_private_key_cicd_polindra
+          chmod 600 ssh_private_key_cicd_polindra
+
+      - name: Extract and Remove artifact.zip
+        run: |
+          ssh -i ssh_private_key_cicd_polindra -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP -p $SSH_PORT 'cd $DEPLOY_PATH && unzip -o artifact.zip && rm -f artifact.zip'
+          rm -f ssh_private_key_cicd_polindra
 
       - name: Fill .env
         run: |
