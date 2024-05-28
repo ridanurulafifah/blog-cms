@@ -187,23 +187,23 @@ jobs:
             echo "Artifact file not found!"
           fi
 
-      # - name: Unzip artifact
-      #   run: unzip -o artifact.zip
+      - name: Unzip artifact
+        run: unzip -o artifact.zip
 
-      # - name: Add SSH key
-      #   uses: webfactory/ssh-agent@v0.5.3
-      #   with:
-      #     ssh-private-key: ${{ secrets.ID_RSA }}
+      - name: Add SSH key
+        uses: webfactory/ssh-agent@v0.5.3
+        with:
+          ssh-private-key: ${{ secrets.ID_RSA }}
 
-      # - name: Deploy to Server
-      #   env:
-      #     SERVER_USER: ${{ secrets.SERVER_USER }}
-      #     SERVER_IP: ${{ secrets.SERVER_IP }}
-      #     SERVER_PORT: ${{ secrets.SERVER_PORT }}
-      #     DEPLOY_PATH: /var/www/laravel/
-      #   run: |
-      #     echo "Deploying application..."
-      #     rsync -avz --exclude '.git' -e "ssh -p $SERVER_PORT" ./ $SERVER_USER@$SERVER_IP:$DEPLOY_PATH
+      - name: Deploy to Server
+        env:
+          SERVER_USER: ${{ secrets.SERVER_USER }}
+          SERVER_IP: ${{ secrets.SERVER_IP }}
+          SSH_PORT: ${{ secrets.SSH_PORT }}
+          DEPLOY_PATH: /var/www/laravel/
+        run: |
+          echo "Deploying application..."
+          rsync -avz --exclude '.git' -e "ssh -p $SSH_PORT" ./ $SERVER_USER@$SERVER_IP:$DEPLOY_PATH
 
       # - name: Fill .env
       #   run: |
