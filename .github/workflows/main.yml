@@ -207,35 +207,18 @@ jobs:
           rm -f -R .git && rm -f artifact.zip
           zip -r artifact.zip .
           rsync -avz --info=progress2 -e "ssh -i ssh_private_key_cicd_polindra -o StrictHostKeyChecking=no -p $SSH_PORT" artifact.zip $SERVER_USER@$SERVER_IP:$DEPLOY_PATH
-          rm -f ssh_private_key_cicd_polindra
-
-      - name: Add SSH key
-        run: |
-          echo "${{ secrets.ID_RSA }}" > ssh_private_key_cicd_polindra
-          chmod 600 ssh_private_key_cicd_polindra
 
       - name: Delete All Exclude artifact.zip
-        run: |
-          ssh -i ssh_private_key_cicd_polindra -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP -p $SSH_PORT 'cd $DEPLOY_PATH && find . -mindepth 1 ! -name artifact.zip -delete'
-          rm -f ssh_private_key_cicd_polindra
-
-      - name: Add SSH key
-        run: |
-          echo "${{ secrets.ID_RSA }}" > ssh_private_key_cicd_polindra
-          chmod 600 ssh_private_key_cicd_polindra
+        run: ssh -i ssh_private_key_cicd_polindra -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP -p $SSH_PORT 'cd $DEPLOY_PATH && find . -mindepth 1 ! -name artifact.zip -delete'
 
       - name: Extract and Remove artifact.zip
-        run: |
-          ssh -i ssh_private_key_cicd_polindra -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP -p $SSH_PORT 'cd $DEPLOY_PATH && unzip -o artifact.zip && rm -f artifact.zip'
-          rm -f ssh_private_key_cicd_polindra
+        run: ssh -i ssh_private_key_cicd_polindra -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP -p $SSH_PORT 'cd $DEPLOY_PATH && unzip -o artifact.zip && rm -f artifact.zip'
 
       - name: Fill .env
-        run: |
-          ssh -i ssh_private_key_cicd_polindra -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP -p $SSH_PORT 'echo "$ENV_FILE_CONTENT" > $DEPLOY_PATH.env'
+        run: ssh -i ssh_private_key_cicd_polindra -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP -p $SSH_PORT 'echo "$ENV_FILE_CONTENT" > $DEPLOY_PATH.env'
 
       - name: Run Migration in Database Server
-        run: |
-          ssh -i id_rsa -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP -p $SSH_PORT 'cd $DEPLOY_PATH && php artisan migrate --force'
+        run: ssh -i id_rsa -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP -p $SSH_PORT 'cd $DEPLOY_PATH && php artisan migrate --force'
 
       - name: Delete SSH Key
         run: rm -f ssh_private_key_cicd_polindra
