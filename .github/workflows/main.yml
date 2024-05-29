@@ -217,10 +217,10 @@ jobs:
         run: ssh -i ssh_private_key_cicd_polindra -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP -p $SSH_PORT 'mkdir -p /var/www/laravel/ || true && unzip -qq -o artifact.zip -d /var/www/laravel/ || true && rm -f artifact.zip || true'
 
       - name: Fill .env
-        run: ssh -i ssh_private_key_cicd_polindra -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP -p $SSH_PORT 'echo "$ENV_FILE_CONTENT" > /var/www/laravel/.env' || true
+        run: ssh -i ssh_private_key_cicd_polindra -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP -p $SSH_PORT 'cd /var/www/laravel/ && echo "$ENV_FILE_CONTENT" > ".env"' || true
 
       - name: Run Migration in Database Server
-        run: ssh -i ssh_private_key_cicd_polindra -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP -p $SSH_PORT 'cd /var/www/laravel/ && php artisan migrate --force && chown www-data:www-data -R ./storage'
+        run: ssh -i ssh_private_key_cicd_polindra -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP -p $SSH_PORT 'cd /var/www/laravel/ && php artisan migrate --force && sudo chown www-data:www-data -R ./storage'
 
       - name: Delete SSH Key
         run: rm -f ssh_private_key_cicd_polindra
