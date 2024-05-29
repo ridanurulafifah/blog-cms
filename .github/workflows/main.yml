@@ -168,6 +168,7 @@ jobs:
       SERVER_IP: ${{ secrets.SERVER_IP }}
       SSH_PORT: ${{ secrets.SSH_PORT }}
       ENV_FILE_CONTENT: ${{ secrets.ENV_FILE_CONTENT }}
+      USER_DIR: /home/polindra
       DEPLOY_PATH: /var/www/laravel/
 
     steps:
@@ -209,14 +210,14 @@ jobs:
           chmod og= ssh_private_key_cicd_polindra
           rm -f -R .git && rm -f artifact.zip
           zip -r artifact.zip .
-          rsync -avz --info=progress2 -e "ssh -i ssh_private_key_cicd_polindra -o StrictHostKeyChecking=no -p $SSH_PORT" artifact.zip $SERVER_USER@$SERVER_IP:~
+          rsync -avz --info=progress2 -e "ssh -i ssh_private_key_cicd_polindra -o StrictHostKeyChecking=no -p $SSH_PORT" artifact.zip $SERVER_USER@$SERVER_IP:$USER_DIR
 
-      - name: Delete All Exclude artifact.zip
+      - name: Delete All file in Deploy Directory
         run: |
-          ssh -i ssh_private_key_cicd_polindra -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP -p $SSH_PORT 'rm -vrf $DEPLOY_PATH*'
+          ssh -i ssh_private_key_cicd_polindra -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP -p $SSH_PORT 'rm -vrf $DEPLOY_PATH* || true'
 
       - name: Extract and Remove artifact.zip
-        run: ssh -i ssh_private_key_cicd_polindra -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP -p $SSH_PORT 'mkdir /var/www/laravel || true && unzip -o artifact.zip -d /var/www/laravel && rm -f artifact.zip'
+        run: ssh -i ssh_private_key_cicd_polindra -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP -p $SSH_PORT 'mkdir $DEPLOY_PAH || true && unzip -o artifact.zip -d $DEPLOY_PAH && rm -f artifact.zip'
 
       - name: Fill .env
         run: ssh -i ssh_private_key_cicd_polindra -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP -p $SSH_PORT 'echo "$ENV_FILE_CONTENT" > $DEPLOY_PATH.env'
