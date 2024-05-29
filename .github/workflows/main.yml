@@ -168,8 +168,6 @@ jobs:
       SERVER_IP: ${{ secrets.SERVER_IP }}
       SSH_PORT: ${{ secrets.SSH_PORT }}
       ENV_FILE_CONTENT: ${{ secrets.ENV_FILE_CONTENT }}
-      USER_DIR: /home/polindra
-      DEPLOY_PATH: /var/www/laravel/
 
     steps:
       - name: Download artifact
@@ -210,20 +208,20 @@ jobs:
           chmod og= ssh_private_key_cicd_polindra
           rm -f -R .git && rm -f artifact.zip
           zip -r artifact.zip .
-          rsync -avz --info=progress2 -e "ssh -i ssh_private_key_cicd_polindra -o StrictHostKeyChecking=no -p $SSH_PORT" artifact.zip $SERVER_USER@$SERVER_IP:$USER_DIR
+          rsync -avz --info=progress2 -e "ssh -i ssh_private_key_cicd_polindra -o StrictHostKeyChecking=no -p $SSH_PORT" artifact.zip $SERVER_USER@$SERVER_IP:/home/polindra
 
       - name: Delete All file in Deploy Directory
         run: |
-          ssh -i ssh_private_key_cicd_polindra -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP -p $SSH_PORT 'rm -vrf $DEPLOY_PATH* || true'
+          ssh -i ssh_private_key_cicd_polindra -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP -p $SSH_PORT 'rm -vrf /var/ww/laravel/* || true'
 
       - name: Extract and Remove artifact.zip
-        run: ssh -i ssh_private_key_cicd_polindra -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP -p $SSH_PORT 'mkdir $DEPLOY_PATH || true && unzip -o artifact.zip -d $DEPLOY_PATH && rm -f artifact.zip'
+        run: ssh -i ssh_private_key_cicd_polindra -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP -p $SSH_PORT 'mkdir -p /var/ww/laravel/ || true && unzip -o artifact.zip -d /var/ww/laravel/ || true && rm -f artifact.zip || true'
 
       - name: Fill .env
-        run: ssh -i ssh_private_key_cicd_polindra -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP -p $SSH_PORT 'echo "$ENV_FILE_CONTENT" > $DEPLOY_PATH.env'
+        run: ssh -i ssh_private_key_cicd_polindra -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP -p $SSH_PORT 'echo "$ENV_FILE_CONTENT" > /var/ww/laravel/.env'
 
       - name: Run Migration in Database Server
-        run: ssh -i id_rsa -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP -p $SSH_PORT 'cd $DEPLOY_PATH && php artisan migrate --force'
+        run: ssh -i id_rsa -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP -p $SSH_PORT 'cd /var/ww/laravel/ && php artisan migrate --force'
 
       - name: Delete SSH Key
         run: rm -f ssh_private_key_cicd_polindra
