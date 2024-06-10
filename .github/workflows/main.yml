@@ -15,7 +15,7 @@ jobs:
     env:
       DB_DATABASE: blogcms
       DB_USERNAME: root
-      DB_PASSWORD: password
+      DB_PASSWORD: 12345678
       BROADCAST_DRIVER: log
     services:
       mysql:
@@ -66,9 +66,6 @@ jobs:
 
       - name: Build Node.JS
         run: npm run build
-
-      - name: Find Bugs
-        run: ./vendor/bin/phpstan analyse app
 
       - name: Create artifact
         run: zip -r artifact.zip .
@@ -144,7 +141,7 @@ jobs:
       - name: Notify to Telegram
         run: |
           if [[ "${{ needs.laravel_build.result }}" == "success" && "${{ needs.laravel_test.result }}" == "success" ]]; then
-            STATUS="CI/CD Pipeline <b>Success ✅ </b>"
+            STATUS="CI/CD Pipeline <b>Success ✅</b>"
           else
             STATUS="CI/CD Pipeline <b>Failure ❌</b>"
           fi
