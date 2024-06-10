@@ -57,7 +57,7 @@
     - name: Set MySQL root password
       mysql_user:
         name: root
-        password: your_root_password
+        password: 12345678
         login_unix_socket: /var/run/mysqld/mysqld.sock
         state: present
 
