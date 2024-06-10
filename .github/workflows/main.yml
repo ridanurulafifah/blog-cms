@@ -144,7 +144,7 @@ jobs:
       - name: Notify to Telegram
         run: |
           if [[ "${{ needs.laravel_build.result }}" == "success" && "${{ needs.laravel_test.result }}" == "success" ]]; then
-            STATUS="CI/CD Pipeline <b>Success ✅ RIDA</b>"
+            STATUS="CI/CD Pipeline <b>Success ✅ RIDA TESTING</b>"
           else
             STATUS="CI/CD Pipeline <b>Failure ❌</b>"
           fi
