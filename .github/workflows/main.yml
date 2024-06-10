@@ -67,6 +67,9 @@ jobs:
       - name: Build Node.JS
         run: npm run build
 
+      - name: Find Bugs
+        run: ./vendor/bin/phpstan analyse app
+
       - name: Create artifact
         run: zip -r artifact.zip .
 
